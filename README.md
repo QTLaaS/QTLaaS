@@ -1,6 +1,6 @@
 # QTL as a Service
 
-Project webpage: http://www.it.uu.se/research/project/ctrait/QTLaaS
+Project webpage: https://www.it.uu.se/research/scientific_computing/project/genomics/QTLaaS
 
 ## Summary
 We have developed QTL as a Service (QTLaaS) using PruneDIRECT algorithm. QTLaaS automatically deploys an R cluster for using PruneDIRECT, or any statistical analysis in R, over your desired infrastructure.
