@@ -12,7 +12,7 @@ Note: Following commands have been tested on Ubuntu 16.04.
 0. Step 0: `python` command is required to be available on each node. If it is not available install with `# apt install python-minimal`   
 1. Step 1: Install Ansible using the bash script, `ansible_install.sh`.
 2. Step 2: Modify the environment variables available in the file: `setup_var.yml`, if needed.
-3. Step 3: For setup deployment, execute: `spark_deployment.yml` as root which is the actual file that contains the installation setups for all the components of QTLaaS platform. Command: `# ansible-playbook -s spark_deployment.yml`, where `-s` is the sudo flag. 
+3. Step 3: For setup deployment, execute: `spark_deployment.yml` as root which is the actual file that contains the installation setups for all the components of QTLaaS platform. Command: `# ansible-playbook -b spark_deployment.yml`, where `-b` is the sudo flag. 
 
 We will soon provide a demo through our project webpage using the SNIC cloud resources. The users can try QTLaaS over a few nodes in our cloud setting. For larger computation, one can download QTLaaS from the github repository and deploy the desired number of nodes over an infrastructure.
 
@@ -29,7 +29,7 @@ For more information on ansible communication setup, visit: https://www.digitalo
 
 5. Edit `/etc/ansible/hosts` using `example-hosts-file` available in the reprository. (Add `[sparkmaster]` followed by the name of sparkmaster node in the next line. Add `[sparkworker]` followed by the names of sparkworkers in the next lines, one per line).
 6. Modify the environment variables available in the file `setup_var.yml`, if needed.
-7. Run `ansible-playbook -s spark_deployment.yml`, where `-s` is the sudo flag.
+7. Run `ansible-playbook -b spark_deployment.yml`, where `-b` is the sudo flag.
 8. Make sure the following ports are open on Spark Master node, `60060` for Jupyter Hub (external access), `7077` Spark Context (internal access), `8080` Spark Web UI (internal access).
 9. Jupyter server tokens will be visible in ansible log messages.
 10. Now you can access following services: 
