@@ -30,8 +30,8 @@
      
      #unarchive: src={{item}} dest=/usr/local/ copy=no
      #with_items:
-     # - http://apache.mirrors.spacedump.net/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
-     # - http://downloads.lightbend.com/scala/2.11.8/scala-2.11.8.tgz
+     # - https://urldefense.proofpoint.com/v2/url?u=http-3A__apache.mirrors.spacedump.net_spark_spark-2D1.6.1_spark-2D1.6.1-2Dbin-2Dhadoop2.6.tgz&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=_Wk3-fz0G0ShHZSBB12Snggak9rMhxcuZ_iyb9UG_UU&e= 
+     # - https://urldefense.proofpoint.com/v2/url?u=http-3A__downloads.lightbend.com_scala_2.11.8_scala-2D2.11.8.tgz&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=ylZyraiotTkhBg4LQqnpJbQ9L-7eB36az0gN-BtGnPU&e= 
 
    - name: adding paths
      lineinfile: dest="{{rc_file}}" line='export PATH=$PATH:{{spark_home}}/bin/:{{scala_home}}/bin\nexport JAVA_HOME={{java_home}}\nSPARK_HOME={{spark_home}}' insertafter='EOF' regexp='export PATH=\$SPARK_HOME' state=present 
@@ -42,24 +42,25 @@
      shell: . "{{rc_file}}"
 
    - name: R repo key
-     apt_key: keyserver=keyserver.ubuntu.com id=E084DAB9
+     apt_key: keyserver=https://urldefense.proofpoint.com/v2/url?u=http-3A__keyserver.ubuntu.com&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=ROv2XPywx9oGjl4tnmsNDJnGXXUjv3KO7ILGJUU1P78&e=  id=E084DAB9
 
    - name: adding R repo
      apt_repository: repo={{r_repo}} update_cache=yes
 
-     #apt_repository: repo='deb http://ftp.acc.umu.se/mirror/CRAN/bin/linux/ubuntu trusty/' update_cache=yes
+     #apt_repository: repo='deb https://urldefense.proofpoint.com/v2/url?u=http-3A__ftp.acc.umu.se_mirror_CRAN_bin_linux_ubuntu&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=0bFr9nNJ6yjWcKdXSjW9mKJLus2o_Zpe-1P2JNLLNuM&e=  trusty/' update_cache=yes
  
    - name: apt update
      apt: update_cache=yes upgrade=dist
 
    - name: install R 
-     apt: pkg={{item}} state=installed update_cache=true 
+     apt: pkg={{item}} state=installed update_cache=true allow_unauthenticated=yes 
      with_items:
       - r-base
       - r-base-dev
+      - libxml2-dev
  
    - name: extra packages
-     apt: pkg={{item}} state=latest update_cache=true
+     apt: pkg={{item}} state=latest update_cache=true allow_unauthenticated=yes
      with_items: 
       - libreadline-dev
       - libzmq5 
@@ -69,7 +70,7 @@
       - libssl-dev
 
    - name: R lib instalation
-     command: Rscript --slave --no-save --no-restore-history -e "if (! ('{{ item }}' %in% installed.packages()[,'Package'])) { install.packages(pkgs='{{ item }}', repos=c('http://ftp.heanet.ie/mirrors/cran.r-project.org/')); print('Added'); } else { print('Already installed'); }"
+     command: Rscript --slave --no-save --no-restore-history -e "if (! ('{{ item }}' %in% installed.packages()[,'Package'])) { install.packages(pkgs='{{ item }}', repos=c('https://urldefense.proofpoint.com/v2/url?u=https-3A__cran.rstudio.com&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=1_g-BJ3fQqnrLjjIT1baduTWaUMB9UJ98dm6YQsfHPk&e= ')); print('Added'); } else { print('Already installed'); }"
      register: r_result
      failed_when: "r_result.rc != 0 or 'had non-zero exit status' in r_result.stderr"
      changed_when: "'Added' in r_result.stdout"
@@ -78,6 +79,9 @@
       - openssl
       - httr
       - git2r
+      - libxml2-dev
+      - roxygen2
+      - rversions
       - devtools
       - evaluate 
       - jsonlite
@@ -87,7 +91,7 @@
       - qtl
 
    - name: R  spark integration
-     command: Rscript --slave --no-save --no-restore-history -e "if (! ('{{ item }}' %in% installed.packages()[,'Package'])) { install.packages(pkgs='{{ item }}', repos=c('http://irkernel.github.io/'), type = 'source'); print('Added'); } else { print('Already installed'); }"
+     command: Rscript --slave --no-save --no-restore-history -e "if (! ('{{ item }}' %in% installed.packages()[,'Package'])) { install.packages(pkgs='{{ item }}', repos=c('https://urldefense.proofpoint.com/v2/url?u=http-3A__irkernel.github.io_&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=zTFJzD3wdquny0HwCEjCxUHXQLp7lqUNW8scAN24RSw&e= '), type = 'source'); print('Added'); } else { print('Already installed'); }"
      register: r_result
      failed_when: "r_result.rc != 0 or 'had non-zero exit status' in r_result.stderr"
      changed_when: "'Added' in r_result.stdout"
@@ -137,7 +141,7 @@
      command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "IRkernel::installspec(user = FALSE)"
 
    - name: start jupyter
-     shell: runuser -l ubuntu -c 'jupyter notebook --ip=0.0.0.0 --port=60060 &'
+     shell: runuser -l ubuntu -c 'jupyter notebook --ip=https://urldefense.proofpoint.com/v2/url?u=http-3A__0.0.0.0&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=eJ-UdaeQ6ecjttop3hw-Q-9NlYN2U1j5c19vd0wlwss&e=  --port=60060 &'
      async: 2592000               # 60*60*24*30 – 1 month
      args:
       executable: /bin/bash 
@@ -156,7 +160,7 @@
       - sysctl -p
 
    - name: start spark master process
-     shell: nohup {{spark_home}}/sbin/start-master.sh  &
+     shell: nohup {{spark_home}}/sbin/https://urldefense.proofpoint.com/v2/url?u=http-3A__start-2Dmaster.sh&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=00jyBQqjKzaRpErQW_6tmv8WElALNJRfa9A0joFO_00&e=   &
 
 - hosts: sparkworker
     
@@ -171,4 +175,4 @@
       - sysctl -p
  
    - name: start spark worker process
-     shell: nohup {{spark_home}}/sbin/start-slave.sh spark://sparkmaster:7077 &
+     shell: nohup {{spark_home}}/sbin/https://urldefense.proofpoint.com/v2/url?u=http-3A__start-2Dslave.sh&d=DwIGaQ&c=shNJtf5dKgNcPZ6Yh64b-A&r=fjbEtGWkpbDFIojbgUxnyJ6E-9TX9y5wwDDumxjddNg&m=5xroPYKwD9B-mtLkCD4T2IqViJhWwcWQn012T0lkPCw&s=8ylIO7EJzaLRJA4D4KKPmr9RIgH5QOmGFsg0kqPHuT8&e=  spark://sparkmaster:7077 &
