@@ -19,7 +19,7 @@
      apt: update_cache=yes upgrade=dist
 
    - name: install java
-     apt: pkg={{item}} state=installed update_cache=true 
+     apt: pkg={{item}} state=latest update_cache=true 
      with_items:
       - default-jre
       - default-jdk
@@ -42,10 +42,14 @@
      shell: . "{{rc_file}}"
 
    - name: R repo key
-     apt_key: keyserver=keyserver.ubuntu.com id=E084DAB9
+     apt_key: keyserver=keyserver.ubuntu.com id=E298A3A825C0D65DFD57CBB651716619E084DAB9
+     #keyserver.ubuntu.com
 
    - name: adding R repo
-     apt_repository: repo={{r_repo}} update_cache=yes
+     #apt_repository: repo={{r_repo}} update_cache=yes
+     apt_repository: repo='deb http://ftp.acc.umu.se/mirror/CRAN/bin/linux/ubuntu bionic-cran35/' update_cache=yes 
+     #deb http://ftp.acc.umu.se/mirror/CRAN/bin/linux/ubuntu xenial/
+     #apt_repository: repo={{r_repo}} update_cache=yes
 
      #apt_repository: repo='deb http://ftp.acc.umu.se/mirror/CRAN/bin/linux/ubuntu trusty/' update_cache=yes
  
@@ -53,12 +57,16 @@
      apt: update_cache=yes upgrade=dist
 
    - name: install R 
-     apt: pkg={{item}} state=installed update_cache=true allow_unauthenticated=yes 
+     apt: pkg={{item}} state=latest update_cache=true allow_unauthenticated=yes 
      with_items:
       - r-base
       - r-base-dev
       - libxml2-dev
- 
+
+   - name: adding extra repo
+     #apt_repository: repo={{r_repo}} update_cache=yes
+     apt_repository: repo='ppa:marutter/c2d4u3.5' update_cache=yes 
+
    - name: extra packages
      apt: pkg={{item}} state=latest update_cache=true allow_unauthenticated=yes
      with_items: 
@@ -114,7 +122,7 @@
 
   tasks: 
    - name: install jupyter
-     apt: pkg={{item}} state=installed update_cache=true
+     apt: pkg={{item}} state=latest update_cache=true
      with_items:
       - python-pip
       - python-dev
