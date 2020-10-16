@@ -21,9 +21,10 @@
    - name: install java
      apt: pkg={{item}} state=latest update_cache=true 
      with_items:
-      - default-jre
-      - default-jdk
- 
+     #- default-jre
+     #- default-jdk
+      - openjdk-8-jdk
+      - openjdk-8-jre   
    - name: download spark
      unarchive: src={{item}} dest=/usr/local/ copy=no 
      with_items: "{{spark_urls}}"  
